@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+форма обратной связи
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2>Оставте свой номер телефона и мы Вам перезвоним</h2>
+    <form method="post">
+        <input name="title" class="form-control" placeholder="введите номер телефона или email"><br>
+        <textarea name="text" class="form-control" placeholder="введите Ваше имя и сообщение"></textarea><br>
+        <input type="submit" class="btn btn-success" value="Отправить">
+    </form>
+</div>
+{% endblock %}

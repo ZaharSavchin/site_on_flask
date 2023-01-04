@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+заметки
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Заметки от пользователей</h1>
+              <a class="button10" href="/create_article">Добавить заметку</a>
+    {% if article|length > 0 %}
+    {% for el in article %}
+    <div class="alert alert-info">
+        <h2>{{ el.title }}</h2>
+        <p>{{ el.intro }}</p>
+        <p><b>Дата: {{ el.date.date() }}</b></p>
+        <a href="/posts/{{ el.id }}" class="btn btn-warning">Читать полностью</a>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>Еще нет заметок на сайте, будьте первым!!!</p>
+    {% endif %}
+
+
+</div>
+{% endblock %}
