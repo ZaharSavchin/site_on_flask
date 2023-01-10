@@ -32,7 +32,11 @@
           <a class="floating-button" href="/posts">Заметки</a>
       </nav>
     </div>
-    {% block body %}{% endblock %}
+
+    {% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+  {% endfor %}
+  {% block body %}{% endblock %}
     <br>
     <br>
     <br>

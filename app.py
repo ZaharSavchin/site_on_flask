@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, get_flashed_messages, flash,\
+    message_flashed, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -6,10 +7,12 @@ from datetime import datetime
 app_ct = Flask(__name__)
 app_ct.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contact.db'
 app_ct.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app_ct.config['SECRET_KEY'] = 'fdgdfgdfggf786hfg6hfg6h7f'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'fdgdfgdfggf786hfg6hfg6878h7f'
 
 
 contacts_db = SQLAlchemy(app_ct)
@@ -48,15 +51,12 @@ def add_cont():
         text = request.form['text']
 
         contact_add = Contact(title=title, text=text)
-
-        try:
-            app_context = app_ct.app_context()
-            app_context.push()
-            contacts_db.session.add(contact_add)
-            contacts_db.session.commit()
-            return redirect('/phone_success')
-        except:
-            return 'При добавлении заметки произошла ошибка'
+        app_context = app_ct.app_context()
+        app_context.push()
+        contacts_db.session.add(contact_add)
+        contacts_db.session.commit()
+        flash("Ваше сообщение успешно отправлено, мы свяжемся с вами в ближайшее время!")
+        return redirect(url_for('add_cont'))
     else:
         return render_template('phone.html')
 
@@ -119,6 +119,7 @@ def create_article():
         try:
             db.session.add(article)
             db.session.commit()
+            flash("Заметка успешно добавлена!")
             return redirect('/posts')
         except:
             return 'При добавлении заметки произошла ошибка'
