@@ -11,6 +11,10 @@
         <p>{{ article_detail.intro }}</p>
         <p>{{ article_detail.text }}</p>
         <p><b>Дата: {{ article_detail.date.date() }}</b></p>
+        {% if session.logged_in %}
+            <a href="/posts/{{ article_detail.id }}/update" class="btn btn-warning">редактировать</a>
+            <a href="/posts/{{ article_detail.id }}/delete" class="btn btn-warning">удалить</a>
+        {% endif %}
         <a href="/posts" class="btn btn-warning">Назад</a>
     </div>
 

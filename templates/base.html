@@ -30,6 +30,13 @@
           <a class="floating-button" href="/delivery">Доставка</a>
           <a class="floating-button" href="/articles">Статьи</a>
           <a class="floating-button" href="/posts">Заметки</a>
+            <div class=metanav>
+  {% if not session.logged_in %}
+    <a href="{{ url_for('login') }}">log in (admin only)</a>
+  {% else %}
+    <a href="{{ url_for('logout') }}">log out</a>
+  {% endif %}
+  </div>
       </nav>
     </div>
 

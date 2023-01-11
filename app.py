@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, get_flashed_messages, flash,\
-    message_flashed, url_for
+    message_flashed, url_for, abort, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -8,11 +8,15 @@ app_ct = Flask(__name__)
 app_ct.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contact.db'
 app_ct.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app_ct.config['SECRET_KEY'] = 'fdgdfgdfggf786hfg6hfg6h7f'
+app_ct.config.from_envvar('SITE_ON_FLASK_SETTINGS', silent=True)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'fdgdfgdfggf786hfg6hfg6878h7f'
+app.config['USERNAME'] = 'Zahar'
+app.config['PASSWORD'] = 'z-1996'
+app.config.from_envvar('SITE_ON_FLASK_SETTINGS', silent=True)
 
 
 contacts_db = SQLAlchemy(app_ct)
@@ -20,6 +24,27 @@ db = SQLAlchemy(app)
 
 contacts_db.init_app(app_ct)
 
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != app.config['USERNAME']:
+            error = 'Invalid username'
+        elif request.form['password'] != app.config['PASSWORD']:
+            error = 'Invalid password'
+        else:
+            session['logged_in'] = True
+            flash('You were logged in')
+            return redirect(url_for('index'))
+    return render_template('login.html', error=error)
+
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    flash('You were logged out')
+    return redirect(url_for('index'))
 
 
 class Article(db.Model):
@@ -99,6 +124,10 @@ def post_detail(id):
 
 @app.route('/posts/<int:id>/delete')
 def post_delete(id):
+    if not session.get('logged_in'):
+        article_detail = Article.query.get(id)
+        flash('Удалять заметки может только администратор!')
+        return render_template('post_detail.html', article_detail=article_detail)
     article_detail = Article.query.get_or_404(id)
     try:
         db.session.delete(article_detail)
@@ -127,8 +156,12 @@ def create_article():
         return render_template('create_article.html')
 
 
-@app.route('//posts/<int:id>/update', methods=['POST', 'GET'])
+@app.route('/posts/<int:id>/update', methods=['POST', 'GET'])
 def post_update(id):
+    if not session.get('logged_in'):
+        article_detail = Article.query.get(id)
+        flash('Редактировать заметки может только администратор!')
+        return render_template('post_detail.html', article_detail=article_detail)
     article_detail = Article.query.get(id)
     if request.method == 'POST':
         article_detail.title = request.form['title']
