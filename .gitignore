@@ -1,2 +1,2 @@
 .idea/
-flask_sqlalchemy/
+__pycache__/

@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, redirect, get_flashed_messages, flash,\
-    message_flashed, url_for, abort, session
+from flask import Flask, render_template, request, redirect, flash, url_for, session, g
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import sqlite3
 
 
 app_ct = Flask(__name__)
@@ -23,6 +23,35 @@ contacts_db = SQLAlchemy(app_ct)
 db = SQLAlchemy(app)
 
 contacts_db.init_app(app_ct)
+
+def connect_db():
+    rv = sqlite3.connect(app.config['DATABASE'])
+    rv.row_factory = sqlite3.Row
+    return rv
+
+
+def init_db():
+    with app.app_context():
+        db = get_db()
+        with app.open_resource('schema.sql', mode='r') as f:
+            db.cursor().executescript(f.read())
+        db.commit()
+
+
+@app.teardown_appcontext
+def close_db(error):
+    """Closes the database again at the end of the request."""
+    if hasattr(g, 'sqlite_db'):
+        g.sqlite_db.close()
+
+
+def get_db():
+    """Если ещё нет соединения с базой данных, открыть новое - для
+    текущего контекста приложения
+    """
+    if not hasattr(g, 'sqlite_db'):
+        g.sqlite_db = connect_db()
+    return g.sqlite_db
 
 
 @app.route('/login', methods=['GET', 'POST'])
