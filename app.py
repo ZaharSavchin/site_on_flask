@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, flash, url_for, ses
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import sqlite3
-from signals import my_signal
+# from signals import my_signal
 
 app_ct = Flask(__name__)
 app_ct.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contact.db'
@@ -251,7 +251,7 @@ def price_bee_trap():
     return render_template('price_bee_trap.html')
 
 
-my_signal(app, template_rendered, message_flashed)
+# my_signal(app, template_rendered, message_flashed)
 
 
 if __name__ == '__main__':
