@@ -22,7 +22,7 @@ app.config.from_envvar('SITE_ON_FLASK_SETTINGS', silent=True)
 contacts_db = SQLAlchemy(app_ct)
 db = SQLAlchemy(app)
 
-contacts_db.init_app(app_ct)
+# contacts_db.init_app(app_ct)
 
 def connect_db():
     rv = sqlite3.connect(app.config['DATABASE'])
