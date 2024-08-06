@@ -1,0 +1,12 @@
+version: "2"
+services:
+    sqlite3:
+        image: nouchka/sqlite3:latest
+        container_name: sqlite
+    app:
+        image: zahar96/site_on_flask
+        ports:
+            - "5000:5000"
+        environment:
+            - USERNAME=name
+            - PASSWORD=pass
